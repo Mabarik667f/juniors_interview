@@ -42,8 +42,8 @@ async def main():
             while pages:
                 u = pages.pop()
                 tasks.append(fetch_url(session, u))
-            results = await asyncio.gather(*tasks) 
-            for soup in results:
+            for finished_task in asyncio.as_completed(tasks):
+                soup = await finished_task
                 new_postfix = await get_next_page_url(soup)
                 new_url = base_url + new_postfix[new_postfix.find("&"):]
                 pages.add(new_url)
